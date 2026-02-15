@@ -5,10 +5,10 @@ markdown
 1. Создайте пустую базу данных в MySQL:
    ```sql
    CREATE DATABASE legal_firm CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-Импортируйте дамп через командную строку:
+2. Импортируйте дамп через командную строку:
     mysql -u root -p legal_firm < legal_firm_database.sql
 
-Или импортируйте через DBeaver:
+3. Или импортируйте через DBeaver:
 Правой кнопкой по базе → Tools → Restore Database
 Укажите путь к файлу legal_firm_database.sql
 Нажмите Start
