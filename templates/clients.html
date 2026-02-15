@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Клиенты{% endblock %}
+
+{% block content %}
+<h2><i class="fas fa-users"></i> Клиенты</h2>
+<hr>
+
+<!-- Фильтр поиска -->
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('clients') }}" class="row g-2">
+            <div class="col-md-8">
+                <input type="text" class="form-control" name="search"
+                       placeholder="Поиск по ФИО..." value="{{ search_query }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search"></i> Найти
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ url_for('add_client') }}" class="btn btn-add w-100">
+                    <i class="fas fa-plus"></i> Добавить клиента
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Таблица клиентов -->
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-list"></i> Список клиентов
+    </div>
+    <div class="card-body">
+        {% if clients %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>ФИО</th>
+                        <th>Телефон</th>
+                        <th>Email</th>
+                        <th>Паспорт</th>
+                        <th>Регистрация</th>
+                        <th>Менеджер</th>
+                        <th>Дел</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                    <tr>
+                        <td><strong>{{ client.client_id }}</strong></td>
+                        <td>{{ client.full_name }}</td>
+                        <td>{{ client.phone }}</td>
+                        <td>{{ client.email or '-' }}</td>
+                        <td>{{ client.passport_data[:30] }}...</td>
+                        <td>{{ client.registration_date }}</td>
+                        <td>{{ client.manager_name }}</td>
+                        <td>
+                            <span class="badge bg-info">{{ client.cases_count }}</span>
+                        </td>
+                        <td>
+                            <div class="table-actions">
+                                <a href="{{ url_for('edit_client', client_id=client.client_id) }}"
+                                   class="btn btn-edit btn-sm" title="Редактировать">
+                                    <i class="fas fa-edit"></i> Изменить
+                                </a>
+                                <form method="POST" action="{{ url_for('delete_client', client_id=client.client_id) }}"
+                                      class="d-inline" onsubmit="return confirm('Вы уверены, что хотите удалить клиента?');">
+                                    <button type="submit" class="btn btn-delete btn-sm" title="Удалить">
+                                        <i class="fas fa-trash"></i> Удалить
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted text-center py-4">
+            <i class="fas fa-users-slash fa-3x mb-3"></i><br>
+            Нет клиентов в базе данных
+        </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

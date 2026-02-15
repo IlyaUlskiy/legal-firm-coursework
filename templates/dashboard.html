@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block title %}Дашборд{% endblock %}
+
+{% block content %}
+<h2><i class="fas fa-tachometer-alt"></i> Дашборд</h2>
+<hr>
+
+<!-- Статистика -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card bg-primary">
+            <i class="fas fa-file-contract fa-2x"></i>
+            <h3>{{ total_cases }}</h3>
+            <p>Всего дел</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-success">
+            <i class="fas fa-clock fa-2x"></i>
+            <h3>{{ active_cases }}</h3>
+            <p>Активных дел</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-warning">
+            <i class="fas fa-users fa-2x"></i>
+            <h3>{{ total_clients }}</h3>
+            <p>Клиентов</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card bg-danger">
+            <i class="fas fa-user-tie fa-2x"></i>
+            <h3>{{ total_lawyers }}</h3>
+            <p>Юристов</p>
+        </div>
+    </div>
+</div>
+
+<!-- Последние дела -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-history"></i> Последние дела
+    </div>
+    <div class="card-body">
+        {% if recent_cases %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Номер дела</th>
+                        <th>Клиент</th>
+                        <th>Юрист</th>
+                        <th>Статус</th>
+                        <th>Дата открытия</th>
+                        <th>Описание</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for case in recent_cases %}
+                    <tr>
+                        <td><strong>{{ case.case_number }}</strong></td>
+                        <td>{{ case.client_name }}</td>
+                        <td>{{ case.lawyer_name }}</td>
+                        <td>
+                            {% if case.status_id == 1 %}
+                                <span class="badge bg-info">{{ case.status_name }}</span>
+                            {% elif case.status_id == 2 %}
+                                <span class="badge bg-primary">{{ case.status_name }}</span>
+                            {% elif case.status_id == 3 %}
+                                <span class="badge bg-warning">{{ case.status_name }}</span>
+                            {% elif case.status_id == 4 %}
+                                <span class="badge bg-success">{{ case.status_name }}</span>
+                            {% elif case.status_id == 5 %}
+                                <span class="badge bg-secondary">{{ case.status_name }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ case.open_date }}</td>
+                        <td>{{ case.description[:100] }}...</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">Нет данных</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Активные дела для юриста -->
+{% if role_id == 3 and user_cases %}
+<div class="card lawyer-dashboard mb-4">
+    <div class="card-header">
+        <i class="fas fa-briefcase"></i> Мои активные дела
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Номер дела</th>
+                        <th>Клиент</th>
+                        <th>Статус</th>
+                        <th>Дата открытия</th>
+                        <th>Описание</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for case in user_cases %}
+                    <tr>
+                        <td><strong>{{ case.case_number }}</strong></td>
+                        <td>{{ case.client_name }}</td>
+                        <td>
+                            <span class="badge bg-primary">{{ case.status_name }}</span>
+                        </td>
+                        <td>{{ case.open_date }}</td>
+                        <td>{{ case.description[:80] }}...</td>
+                        <td>
+                            <div class="table-actions">
+                                <a href="{{ url_for('case_hearings', case_id=case.case_id) }}"
+                                   class="btn btn-info btn-sm">
+                                    <i class="fas fa-calendar-alt"></i> Заседания
+                                </a>
+                                <a href="{{ url_for('case_documents', case_id=case.case_id) }}"
+                                   class="btn btn-success btn-sm">
+                                    <i class="fas fa-file"></i> Документы
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

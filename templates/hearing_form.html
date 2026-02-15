@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if mode == 'add' %}Добавить заседание{% else %}Редактировать заседание{% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>
+    {% if mode == 'add' %}
+        <i class="fas fa-calendar-plus"></i> Добавить заседание
+    {% else %}
+        <i class="fas fa-calendar-edit"></i> Редактировать заседание
+    {% endif %}
+</h2>
+<hr>
+
+<div class="card">
+    <div class="card-header">
+        {% if mode == 'add' %}
+            <i class="fas fa-plus"></i> Новое заседание для дела {{ case_number }}
+        {% else %}
+            <i class="fas fa-edit"></i> Редактирование заседания
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <form method="POST" action="
+            {% if mode == 'add' %}
+                {{ url_for('add_hearing', case_id=case_id) }}
+            {% else %}
+                {{ url_for('edit_hearing', hearing_id=hearing.hearing_id) }}
+            {% endif %}">
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="hearing_date" class="form-label">Дата и время заседания <span class="text-danger">*</span></label>
+                    <input type="datetime-local" class="form-control" id="hearing_date" name="hearing_date"
+                           value="{{ hearing.hearing_date.strftime('%Y-%m-%dT%H:%M') if hearing and hearing.hearing_date else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="court_name" class="form-label">Наименование суда <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="court_name" name="court_name"
+                           value="{{ hearing.court_name if hearing else '' }}" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="courtroom" class="form-label">Номер зала</label>
+                    <input type="text" class="form-control" id="courtroom" name="courtroom"
+                           value="{{ hearing.courtroom if hearing else '' }}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="result" class="form-label">Результат заседания</label>
+                <textarea class="form-control" id="result" name="result" rows="4">{{ hearing.result if hearing else '' }}</textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    {% if mode == 'add' %}Сохранить{% else %}Обновить{% endif %}
+                </button>
+                <a href="
+                    {% if mode == 'add' %}
+                        {{ url_for('case_hearings', case_id=case_id) }}
+                    {% else %}
+                        {{ url_for('case_hearings', case_id=hearing.case_id) }}
+                    {% endif %}"
+                   class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

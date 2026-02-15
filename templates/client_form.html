@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if mode == 'add' %}Добавить клиента{% else %}Редактировать клиента{% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>
+    {% if mode == 'add' %}
+        <i class="fas fa-user-plus"></i> Добавить клиента
+    {% else %}
+        <i class="fas fa-user-edit"></i> Редактировать клиента
+    {% endif %}
+</h2>
+<hr>
+
+<div class="card">
+    <div class="card-header">
+        {% if mode == 'add' %}
+            <i class="fas fa-plus"></i> Новая запись
+        {% else %}
+            <i class="fas fa-edit"></i> Редактирование
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <form method="POST" action="
+            {% if mode == 'add' %}
+                {{ url_for('add_client') }}
+            {% else %}
+                {{ url_for('edit_client', client_id=client.client_id) }}
+            {% endif %}">
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="full_name" class="form-label">ФИО <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="full_name" name="full_name"
+                           value="{{ client.full_name if client else '' }}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">Телефон <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="phone" name="phone"
+                           value="{{ client.phone if client else '' }}" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email"
+                           value="{{ client.email if client else '' }}">
+                </div>
+                <div class="col-md-6">
+                    <label for="passport_data" class="form-label">Паспортные данные <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="passport_data" name="passport_data"
+                           value="{{ client.passport_data if client else '' }}" required>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Сохранить
+                </button>
+                <a href="{{ url_for('clients') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

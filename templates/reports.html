@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Отчеты{% endblock %}
+
+{% block content %}
+<h2><i class="fas fa-chart-bar"></i> Отчеты</h2>
+<hr>
+
+<!-- Кнопки экспорта -->
+{% if role_id in [1, 2] %}
+<div class="mb-4">
+    <div class="btn-group">
+        <a href="{{ url_for('reports', export='csv') }}" class="btn btn-success">
+            <i class="fas fa-file-csv"></i> Экспорт в CSV
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Отчет по загруженности юристов -->
+<div class="card mb-4">
+    <div class="card-header">
+        <i class="fas fa-user-tie"></i> Загруженность юристов
+    </div>
+    <div class="card-body">
+        {% if lawyer_stats %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Юрист</th>
+                        <th>Всего дел</th>
+                        <th>В работе</th>
+                        <th>Завершено</th>
+                        <th>Средний срок ведения (дни)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in lawyer_stats %}
+                    <tr>
+                        <td><strong>{{ stat.lawyer_name }}</strong></td>
+                        <td><span class="badge bg-primary">{{ stat.total_cases }}</span></td>
+                        <td><span class="badge bg-warning">{{ stat.in_progress_cases }}</span></td>
+                        <td><span class="badge bg-success">{{ stat.completed_cases }}</span></td>
+                        <td>{{ '%.1f'|format(stat.avg_days_open|float) if stat.avg_days_open else '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">Нет данных</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Статистика по статусам дел -->
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-chart-pie"></i> Статистика по статусам дел
+    </div>
+    <div class="card-body">
+        {% if status_stats %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Статус</th>
+                        <th>Количество дел</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for stat in status_stats %}
+                    <tr>
+                        <td>
+                            {% if loop.index == 1 %}
+                                <span class="badge bg-info">{{ stat.status_name }}</span>
+                            {% elif loop.index == 2 %}
+                                <span class="badge bg-primary">{{ stat.status_name }}</span>
+                            {% elif loop.index == 3 %}
+                                <span class="badge bg-warning">{{ stat.status_name }}</span>
+                            {% elif loop.index == 4 %}
+                                <span class="badge bg-success">{{ stat.status_name }}</span>
+                            {% elif loop.index == 5 %}
+                                <span class="badge bg-secondary">{{ stat.status_name }}</span>
+                            {% endif %}
+                        </td>
+                        <td><strong>{{ stat.count }}</strong></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted">Нет данных</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

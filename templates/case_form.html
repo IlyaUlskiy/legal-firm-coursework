@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if mode == 'add' %}Добавить дело{% else %}Редактировать дело{% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>
+    {% if mode == 'add' %}
+        <i class="fas fa-file-contract"></i> Добавить дело
+    {% else %}
+        <i class="fas fa-file-contract"></i> Редактировать дело
+    {% endif %}
+</h2>
+<hr>
+
+<div class="card">
+    <div class="card-header">
+        {% if mode == 'add' %}
+            <i class="fas fa-plus"></i> Новая запись
+        {% else %}
+            <i class="fas fa-edit"></i> Редактирование
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <form method="POST" action="
+            {% if mode == 'add' %}
+                {{ url_for('add_case') }}
+            {% else %}
+                {{ url_for('edit_case', case_id=case.case_id) }}
+            {% endif %}">
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="client_id" class="form-label">Клиент <span class="text-danger">*</span></label>
+                    <select class="form-select" id="client_id" name="client_id" required>
+                        <option value="">Выберите клиента</option>
+                        {% for client in clients %}
+                        <option value="{{ client.client_id }}"
+                                {% if case and case.client_id == client.client_id %}selected{% endif %}>
+                            {{ client.full_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="lawyer_id" class="form-label">Юрист <span class="text-danger">*</span></label>
+                    <select class="form-select" id="lawyer_id" name="lawyer_id" required>
+                        <option value="">Выберите юриста</option>
+                        {% for lawyer in lawyers %}
+                        <option value="{{ lawyer.user_id }}"
+                                {% if case and case.lawyer_id == lawyer.user_id %}selected{% endif %}>
+                            {{ lawyer.full_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="status_id" class="form-label">Статус <span class="text-danger">*</span></label>
+                    <select class="form-select" id="status_id" name="status_id" required>
+                        <option value="">Выберите статус</option>
+                        {% for status in statuses %}
+                        <option value="{{ status.status_id }}"
+                                {% if case and case.status_id == status.status_id %}selected{% endif %}>
+                            {{ status.status_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="type_id" class="form-label">Тип дела <span class="text-danger">*</span></label>
+                    <select class="form-select" id="type_id" name="type_id" required>
+                        <option value="">Выберите тип</option>
+                        {% for type in types %}
+                        <option value="{{ type.type_id }}"
+                                {% if case and case.type_id == type.type_id %}selected{% endif %}>
+                            {{ type.type_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="category_id" class="form-label">Категория <span class="text-danger">*</span></label>
+                    <select class="form-select" id="category_id" name="category_id" required>
+                        <option value="">Выберите категорию</option>
+                        {% for category in categories %}
+                        <option value="{{ category.category_id }}"
+                                {% if case and case.category_id == category.category_id %}selected{% endif %}>
+                            {{ category.category_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Описание дела <span class="text-danger">*</span></label>
+                <textarea class="form-control" id="description" name="description" rows="4" required>{{ case.description if case else '' }}</textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Сохранить
+                </button>
+                <a href="{{ url_for('cases') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Отмена
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
